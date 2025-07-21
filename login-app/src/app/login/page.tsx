@@ -8,11 +8,13 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login/`, {
@@ -20,6 +22,7 @@ export default function Login() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // Add this for session cookies
         body: JSON.stringify({
           email: username,
           password: password,
@@ -37,6 +40,8 @@ export default function Login() {
       }
     } catch (error) {
       setError('Network error. Make sure Django backend is running on port 8000.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,9 +84,10 @@ export default function Login() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
             >
-              Sign in
+              {loading ? 'Signing in...' : 'Sign in'}
             </button>
           </div>
 

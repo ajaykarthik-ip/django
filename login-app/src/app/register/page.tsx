@@ -32,6 +32,7 @@ export default function Register() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // Add this for session cookies
         body: JSON.stringify({
           email,
           username,
@@ -49,7 +50,7 @@ export default function Register() {
         router.push('/home');
       } else {
         const errorData = await response.json();
-        setError(errorData.message || 'Registration failed');
+        setError(errorData.error || 'Registration failed'); // Changed from message to error
       }
     } catch (error) {
       setError('Network error. Make sure Django backend is running on port 8000.');
